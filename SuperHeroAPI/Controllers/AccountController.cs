@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SuperHeroAPI.Models;
+using SuperHeroAPI.Services;
 
 namespace SuperHeroAPI.Controllers
 {
@@ -10,11 +11,13 @@ namespace SuperHeroAPI.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost("login")]
@@ -31,7 +34,7 @@ namespace SuperHeroAPI.Controllers
                 return new User
                 {
                     UserName = user.UserName,
-                    Token = "This wil be a token",
+                    Token = _tokenService.CreateToken(user),
                     EmailAddress = user.Email,
                     Country = user.Country
                 };
